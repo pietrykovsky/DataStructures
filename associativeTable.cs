@@ -1,23 +1,6 @@
-﻿public class Node<TKey, TValue>
+﻿public class AssociativeTable<TKey, TValue>
 {
-    public TKey Key { get; set; }
-    public TValue Value { get; set; }
-
-    /// <summary>
-    /// Represents a node in the associative table.
-    /// </summary>
-    /// <param name="key">The key associated with the node.</param>
-    /// <param name="value">The value associated with the node.</param>
-    public Node(TKey key, TValue value)
-    {
-        Key = key;
-        Value = value;
-    }
-}
-
-public class AssociativeTable<TKey, TValue>
-{
-    private Node<TKey, TValue>[] Data;
+    private Tuple<TKey, TValue>[] Data;
     private int Count;
     
     
@@ -27,7 +10,7 @@ public class AssociativeTable<TKey, TValue>
     /// <param name="capacity">The initial number of elements that the associative table can contain.</param>
     public AssociativeTable(int capacity)
     {
-        Data = new Node<TKey, TValue>[capacity];
+        Data = new Tuple<TKey, TValue>[capacity];
         Count = 0;
     }
     
@@ -37,16 +20,16 @@ public class AssociativeTable<TKey, TValue>
     private void DoubleArraySize()
     {
         int tempSize = Data.Length * 2;
-        Node<TKey, TValue>[] tempArray = new Node<TKey, TValue>[tempSize];
+        Tuple<TKey, TValue>[] tempArray = new Tuple<TKey, TValue>[tempSize];
         Array.Copy(Data, tempArray, Count);
         Data = tempArray;
     }
     
     /// <summary>
-    /// Inserts new Node element to array, if Key already exists - it will be overwritten.
+    /// Inserts new Tuple element to array, if Key already exists - it will be overwritten.
     /// </summary>
-    /// <param name="tempKey">The key associated with the node.</param>
-    /// <param name="tempValue">The value associated with the node.</param>
+    /// <param name="tempKey">The key associated with the Tuple.</param>
+    /// <param name="tempValue">The value associated with the Tuple.</param>
     public void Put(TKey tempKey, TValue tempValue)
     {
         if (Count == Data.Length)
@@ -54,12 +37,12 @@ public class AssociativeTable<TKey, TValue>
             DoubleArraySize();
         }
 
-        Data[Count] = new Node<TKey, TValue>(tempKey, tempValue);
+        Data[Count] = new Tuple<TKey, TValue>(tempKey, tempValue);
         Count++;
     }
     
     /// <summary>
-    /// Returns all values of Node elements inside Data array with passed key value.
+    /// Returns all values of Tuple elements inside Data array with passed key value.
     /// </summary>
     /// <param name="tempKey">The key to search for.</param>
     public TValue Get(TKey tempKey)
