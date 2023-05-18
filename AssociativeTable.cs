@@ -32,12 +32,21 @@
     /// <param name="tempValue">The value associated with the Tuple.</param>
     public void Put(TKey tempKey, TValue tempValue)
     {
+        for(int i = 0; i < Count; i++)
+        {
+            if(EqualityComparer<TKey>.Default.Equals(Data[i].Key, tempKey))
+            {
+                Data[i].Value = tempValue;
+                return;
+            }
+        }
+
         if (Count == Data.Length)
         {
             DoubleArraySize();
         }
 
-        Data[Count] = new Tuple<TKey, TValue>(tempKey, tempValue);
+        Data[Count] = new Node<TKey, TValue>(tempKey, tempValue);
         Count++;
     }
     
