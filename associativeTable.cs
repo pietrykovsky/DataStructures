@@ -49,11 +49,12 @@
     {
         for (int i = 0; i < Count; i++)
         {
-            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, tempKey))
+            if (EqualityComparer<TKey>.Default.Equals(Data[i].Item1, tempKey))
             {
-                return Data[i].Value;
+                return Data[i].Item2;
             }  
         }
+        throw new Exception("Key not found");
     }
     
     /// <summary>
@@ -65,7 +66,7 @@
         int tempIndex = -1;
         for (int i = 0; i < Count; i++)
         {
-            if (EqualityComparer<TValue>.Default.Equals(Data[i].Value, tempValue))
+            if (EqualityComparer<TValue>.Default.Equals(Data[i].Item2, tempValue))
             {
                 tempIndex = i;
                 for (int j = tempIndex; j < Data.Length; j++)
@@ -86,7 +87,7 @@
         int tempIndex = -1;
         for (int i = 0; i < Count; i++)
         {
-            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, tempKey))
+            if (EqualityComparer<TKey>.Default.Equals(Data[i].Item1, tempKey))
             {
                 tempIndex = i;
                 for (int j = tempIndex; j < Data.Length; j++)
