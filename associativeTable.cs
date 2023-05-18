@@ -24,9 +24,10 @@ public class AssociativeTable<TKey, TValue>
     /// <summary>
     /// Initializes a new instance of the associative table class.
     /// </summary>
-    public AssociativeTable()
+    /// <param name="capacity">The initial number of elements that the associative table can contain.</param>
+    public AssociativeTable(int capacity)
     {
-        Data = new Node<TKey, TValue>[1];
+        Data = new Node<TKey, TValue>[capacity];
         Count = 0;
     }
     
@@ -42,8 +43,10 @@ public class AssociativeTable<TKey, TValue>
     }
     
     /// <summary>
-    /// Inserts new Node element to array.
+    /// Inserts new Node element to array, if Key already exists - it will be overwritten.
     /// </summary>
+    /// <param name="tempKey">The key associated with the node.</param>
+    /// <param name="tempValue">The value associated with the node.</param>
     public void Put(TKey tempKey, TValue tempValue)
     {
         if (Count == Data.Length)
