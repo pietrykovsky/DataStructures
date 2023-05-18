@@ -1,33 +1,13 @@
-public class Node<TKey, TValue>
+public abstract class BaseHashMap<TKey, TValue>
 {
-    public TKey Key { get; set; }
-    public TValue Value { get; set; }
-    public Node<TKey, TValue> Next { get; set; }
-
-    /// <summary>
-    /// Represents a node in the hash map.
-    /// </summary>
-    /// <param name="key">The key associated with the node.</param>
-    /// <param name="value">The value associated with the node.</param>
-    /// <param name="next">The next node in the linked list.</param>
-    public Node(TKey key, TValue value, Node<TKey, TValue> next = null)
-    {
-        Key = key;
-        Value = value;
-        Next = next;
-    }
-}
-
-public class HashMap<TKey, TValue>
-{
-    private Node<TKey, TValue>[] data;
-    private int count;
+    protected Node<TKey, TValue>[] data;
+    protected int count;
 
     /// <summary>
     /// Initializes a new instance of the HashMap class with the specified capacity.
     /// </summary>
     /// <param name="capacity">The initial capacity of the hash map.</param>
-    public HashMap(int capacity)
+    public BaseHashMap(int capacity)
     {
         data = new Node<TKey, TValue>[capacity];
         count = 0;
@@ -172,9 +152,44 @@ public class HashMap<TKey, TValue>
     /// </summary>
     /// <param name="key">The key to compute the hash code for.</param>
     /// <returns>The index in the array where the key-value pair should be stored.</returns>
-    private int GetHash(TKey key)
+    protected abstract int GetHash(TKey key);
+}
+
+public class SimpleHashMap<TKey, TValue> : BaseHashMap<TKey, TValue>
+{
+    public SimpleHashMap(int capacity) : base(capacity) { }
+
+    protected override int GetHash(TKey key)
     {
-        // Compute the hash code for the key and map it to an index in the array
         return Math.Abs(key.GetHashCode()) % data.Length;
+    }
+}
+
+public class LengthHashMap<TKey, TValue> : BaseHashMap<TKey, TValue>
+{
+    public LengthHashMap(int capacity) : base(capacity) { }
+
+    protected override int GetHash(TKey key)
+    {
+        // convert TKey to string and then get the length
+        string keyString = key.ToString();
+        return keyString.Length % data.Length;
+    }
+}
+
+public class CharValueHashMap<TKey, TValue> : BaseHashMap<TKey, TValue>
+{
+    public CharValueHashMap(int capacity) : base(capacity) { }
+
+    protected override int GetHash(TKey key)
+    {
+        // convert TKey to string and then sum the char values
+        string keyString = key.ToString();
+        int sum = 0;
+        foreach (char c in keyString)
+        {
+            sum += (int)c;
+        }
+        return sum % data.Length;
     }
 }
