@@ -1,16 +1,13 @@
-public abstract class BaseHashMap<TKey, TValue>
+public abstract class BaseHashMap<TKey, TValue> : BaseMap<TKey, TValue>
 {
-    protected Node<TKey, TValue>[] data;
-    protected int count;
-
     /// <summary>
     /// Initializes a new instance of the HashMap class with the specified capacity.
     /// </summary>
     /// <param name="capacity">The initial capacity of the hash map.</param>
     public BaseHashMap(int capacity)
     {
-        data = new Node<TKey, TValue>[capacity];
-        count = 0;
+        Data = new Node<TKey, TValue>[capacity];
+        Count = 0;
     }
 
     /// <summary>
@@ -19,10 +16,10 @@ public abstract class BaseHashMap<TKey, TValue>
     /// </summary>
     /// <param name="key">The key to insert or update.</param>
     /// <param name="value">The value associated with the key.</param>
-    public void Put(TKey key, TValue value)
+    public override void Put(TKey key, TValue value)
     {
         int index = GetHash(key);
-        Node<TKey, TValue> node = data[index];
+        Node<TKey, TValue> node = Data[index];
 
         while (node != null)
         {
@@ -35,9 +32,9 @@ public abstract class BaseHashMap<TKey, TValue>
             node = node.Next;
         }
         // Key does not exist, create a new node and add it to the linked list
-        Node<TKey, TValue> newNode = new Node<TKey, TValue>(key, value, data[index]);
-        data[index] = newNode;
-        count++;
+        Node<TKey, TValue> newNode = new Node<TKey, TValue>(key, value, Data[index]);
+        Data[index] = newNode;
+        Count++;
     }
 
     /// <summary>
@@ -46,10 +43,10 @@ public abstract class BaseHashMap<TKey, TValue>
     /// <param name="key">The key to search for.</param>
     /// <returns>The value associated with the key.</returns>
     /// <exception cref="Exception">Thrown when the key is not found.</exception>
-    public TValue Get(TKey key)
+    public override TValue Get(TKey key)
     {
         int index = GetHash(key);
-        Node<TKey, TValue> node = data[index];
+        Node<TKey, TValue> node = Data[index];
 
         while (node != null)
         {
@@ -68,10 +65,10 @@ public abstract class BaseHashMap<TKey, TValue>
     /// Removes the specified key and its associated value from the hash map.
     /// </summary>
     /// <param name="key">The key to remove.</param>
-    public void Remove(TKey key)
+    public override void Remove(TKey key)
     {
         int index = GetHash(key);
-        Node<TKey, TValue> node = data[index];
+        Node<TKey, TValue> node = Data[index];
         Node<TKey, TValue> prev = null;
 
         while (node != null)
@@ -81,14 +78,14 @@ public abstract class BaseHashMap<TKey, TValue>
                 if (prev == null)
                 {
                     // Key found at the head of the linked list
-                    data[index] = node.Next;
+                    Data[index] = node.Next;
                 }
                 else
                 {
                     // Key found in the middle or end of the linked list
                     prev.Next = node.Next;
                 }
-                count--;
+                Count--;
                 return;
             }
             prev = node;
@@ -101,10 +98,10 @@ public abstract class BaseHashMap<TKey, TValue>
     /// </summary>
     /// <param name="key">The key to search for.</param>
     /// <returns>True if the key exists, False otherwise.</returns>
-    public bool ContainsKey(TKey key)
+    public override bool ContainsKey(TKey key)
     {
         int index = GetHash(key);
-        Node<TKey, TValue> node = data[index];
+        Node<TKey, TValue> node = Data[index];
 
         while (node != null)
         {
@@ -117,36 +114,6 @@ public abstract class BaseHashMap<TKey, TValue>
 
         return false;
     }
-
-    /// <summary>
-    /// Gets the number of key-value pairs in the hash map.
-    /// </summary>
-    /// <returns>The number of key-value pairs.</returns>
-    public int Size()
-    {
-        return count;
-    }
-
-    /// <summary>
-    /// Checks whether the hash map is empty.
-    /// </summary>
-    /// <returns>True if the hash map is empty, False otherwise.</returns>
-
-    public bool IsEmpty()
-    {
-        return count == 0;
-    }
-
-    /// <summary>
-    /// Removes all key-value pairs from the hash map, making it empty.
-    /// </summary>
-    public void Clear()
-    {
-        // Clear the hash map by creating a new array and resetting the count
-        data = new Node<TKey, TValue>[data.Length];
-        count = 0;
-    }
-
     /// <summary>
     /// Computes the hash code for the specified key and maps it to an index in the underlying array.
     /// </summary>
@@ -161,7 +128,7 @@ public class SimpleHashMap<TKey, TValue> : BaseHashMap<TKey, TValue>
 
     protected override int GetHash(TKey key)
     {
-        return Math.Abs(key.GetHashCode()) % data.Length;
+        return Math.Abs(key.GetHashCode()) % Data.Length;
     }
 }
 
@@ -173,7 +140,7 @@ public class LengthHashMap<TKey, TValue> : BaseHashMap<TKey, TValue>
     {
         // convert TKey to string and then get the length
         string keyString = key.ToString();
-        return keyString.Length % data.Length;
+        return keyString.Length % Data.Length;
     }
 }
 
@@ -190,6 +157,6 @@ public class CharValueHashMap<TKey, TValue> : BaseHashMap<TKey, TValue>
         {
             sum += (int)c;
         }
-        return sum % data.Length;
+        return sum % Data.Length;
     }
 }
