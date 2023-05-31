@@ -12,6 +12,22 @@ namespace DataStructures
             Count = 0;
         }
 
+        public override IEnumerator<Node<TKey, TValue>> GetEnumerator()
+        {
+            // Iterate over all buckets.
+            for (int i = 0; i < Data.Length; i++)
+            {
+                var current = Data[i];
+
+                // Iterate over all nodes within a bucket.
+                while (current != null)
+                {
+                    yield return new Node<TKey, TValue>(current.Key, current.Value);
+                    current = current.Next;
+                }
+            }
+        }
+
         /// <summary>
         /// Inserts a key-value pair into the hash map.
         /// If the key already exists, the value is updated.
