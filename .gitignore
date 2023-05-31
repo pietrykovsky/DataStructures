@@ -137,7 +137,11 @@ $RECYCLE.BIN/
 _NCrunch*
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 .idea
 =======
 >>>>>>> 89ea021 (reverted gitignore deletion)
+=======
+.idea
+>>>>>>> 1ff19adc48d7933deae1505b54c5e1da3a338afd
 .vs
