@@ -1,5 +1,7 @@
 ﻿public class AssociativeTable<TKey, TValue> : BaseMap<TKey, TValue>
 {
+    private int FirstFreeIndex = 0;
+    
     /// <summary>
     /// Initializes a new instance of the associative table class.
     /// </summary>
@@ -11,7 +13,7 @@
     }
     
     /// <summary>
-    /// Doubles size of associative table when there is no place for adding new element.
+    /// Doubles (creates new array with doubled size) the size of an array, and copies old one into new one.
     /// </summary>
     private void DoubleArraySize()
     {
@@ -22,49 +24,66 @@
     }
     
     /// <summary>
-    /// Inserts new Tuple element to array, if Key already exists - it will be overwritten.
+    /// Inserts a key-value pair into the array.
+    /// If the key already exists, the value is updated.
     /// </summary>
-    /// <param name="tempKey">The key associated with the Tuple.</param>
-    /// <param name="tempValue">The value associated with the Tuple.</param>
-    public override void Put(TKey tempKey, TValue tempValue)
+    /// <param name="Key">The key to insert or update.</param>
+    /// <param name="Value">The value associated with the key.</param>
+    public override void Put(TKey Key, TValue Value)
     {
+        if (FirstFreeIndex == Data.Length)
+        {
+            DoubleArraySize();
+            FirstFreeIndex = Count;
+        }
+        // using ContainsKey method will make this block of function O(2n) instead of O(n)
         for (int i = 0; i < Count; i++)
         {
-            if(EqualityComparer<TKey>.Default.Equals(Data[i].Key, tempKey))
+            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
             {
-                Data[i].Value = tempValue;
+                Data[i].Value = Value;
                 return;
             }
         }
-        if (Count == Data.Length)
-        {
-            DoubleArraySize();
-        }
-        Data[Count] = new Node<TKey, TValue>(tempKey, tempValue);
+        Data[FirstFreeIndex] = new Node<TKey, TValue>(Key, Value);
         Count++;
+        for (int i = FirstFreeIndex; i < Data.Length; i++)
+        {
+            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, default(TKey)))
+            {
+                FirstFreeIndex = i;
+                break;
+            }
+        }
     }
     
     /// <summary>
-    /// Returns all values of Tuple elements inside Data array with passed key value.
+    /// Retrieves the value associated with the specified key.
     /// </summary>
-    /// <param name="tempKey">The key to search for.</param>
-    public override TValue Get(TKey tempKey)
+    /// <param name="Key">The key to search for.</param>
+    /// <returns>The value associated with the key.</returns>
+    public override TValue Get(TKey Key)
     {
         for (int i = 0; i < Count; i++)
         {
-            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, tempKey))
+            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
             {
                 return Data[i].Value;
             }  
         }
         throw new Exception("Key not found");
     }
-
-    public override bool ContainsKey(TKey tempKey)
+    
+    /// <summary>
+    /// Determines whether the hash map contains the specified key.
+    /// </summary>
+    /// <param name="Key">The key to search for.</param>
+    /// <returns>True if the key exists, False otherwise.</returns>
+    public override bool ContainsKey(TKey Key)
     {
         for (int i = 0; i < Count; i++)
         {
-            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, tempKey))
+            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
             {
                 return true;
             }
@@ -75,20 +94,19 @@
     /// <summary>
     /// Removes the specified key and its associated value from the hash map.
     /// </summary>
-    /// <param name="tempKey">The key to remove - method will loop through whole array..</param>
-    public override void Remove(TKey tempKey)
+    /// <param name="Key">The key to remove.</param>
+    public override void Remove(TKey Key)
     {
-        int tempIndex = -1;
         for (int i = 0; i < Count; i++)
         {
-            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, tempKey))
+            if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key ))
             {
-                tempIndex = i;
-                for (int j = tempIndex; j < Data.Length; j++)
+                Data[i] = new Node<TKey, TValue>(default(TKey), default(TValue));
+                if (i < FirstFreeIndex)
                 {
-                    Data[i] = Data[i + 1];
-                    Count--;
+                    FirstFreeIndex = i;
                 }
+                Count--;
             }
         }
     }
