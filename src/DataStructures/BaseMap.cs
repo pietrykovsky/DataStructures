@@ -1,9 +1,18 @@
-﻿namespace DataStructures
+﻿using System.Collections;
+
+namespace DataStructures
 {
-    public abstract class BaseMap<TKey, TValue>
+    public abstract class BaseMap<TKey, TValue> : IEnumerable<Node<TKey, TValue>>
     {
         protected Node<TKey, TValue>[] Data;
         protected int Count;
+
+        public abstract IEnumerator<Node<TKey, TValue>> GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         /// <summary>
         /// Inserts a key-value pair into the map.
