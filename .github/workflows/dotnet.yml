@@ -19,4 +19,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore ./src/DataStructures/DataStructures.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal ./tests/DataStructuresTests/DataStructuresTests.sln
+      run: dotnet test --verbosity normal ./tests/DataStructuresTests/DataStructuresTests.sln
