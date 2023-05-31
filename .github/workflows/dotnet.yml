@@ -20,6 +20,6 @@ jobs:
     - name: Restore source dependencies
       run: dotnet restore ./src\DataStructures/
     - name: Build
-      run: dotnet build --no-restore ./src\DataStructures/
+      run: dotnet build --no-restore ./src/DataStructures/
     - name: Test
-      run: dotnet test --no-build --verbosity normal ./tests\DataStructuresTests/
+      run: dotnet test --no-build --verbosity normal ./tests/DataStructuresTests/
