@@ -1,5 +1,4 @@
-﻿using DataStructures;
-namespace DataStructuresTests
+﻿namespace DataStructuresTests
 {
     public class AssociativeTableTests
     {
