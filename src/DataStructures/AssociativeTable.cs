@@ -1,4 +1,4 @@
-﻿public class AssociativeTable<TKey, TValue>
+﻿/*public class AssociativeTable<TKey, TValue>
 {
     private Tuple<TKey, TValue>[] Data;
     private int Count;
@@ -127,3 +127,4 @@
     }
     
 }
+*/
