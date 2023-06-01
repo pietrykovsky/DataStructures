@@ -207,5 +207,46 @@
 
             Assert.False(map.IsEmpty());
         }
+
+        [Fact]
+        public void AssociativeTable_Iteration_WorksCorrectly()
+        {
+            // Arrange
+            var data = new AssociativeTable<string, int>(10);
+            data.Put("test1", 1);
+            data.Put("test2", 2);
+            data.Put("test3", 3);
+
+            // Act
+            var enumeratedData = new List<Node<string, int>>();
+            foreach (var node in data)
+            {
+                enumeratedData.Add(node);
+            }
+
+            // Assert
+            Assert.Equal(data.Size(), enumeratedData.Count);
+            foreach (var node in data)
+            {
+                Assert.Contains(node, enumeratedData);
+            }
+        }
+
+        [Fact]
+        public void AssociativeTable_Iteration_EmptyAssociativeTable()
+        {
+            // Arrange
+            var data = new AssociativeTable<string, int>(10);
+
+            // Act
+            var enumeratedData = new List<Node<string, int>>();
+            foreach (var node in data)
+            {
+                enumeratedData.Add(node);
+            }
+
+            // Assert
+            Assert.Empty(enumeratedData);
+        }
     }
 }
