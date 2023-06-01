@@ -8,7 +8,9 @@ namespace DataStructures
 
         public override IEnumerator<Node<TKey, TValue>> GetEnumerator()
         {
-            throw new NotImplementedException();
+            // Iterate over all buckets.
+            for (int i = 0; i < Data.Length; i++)
+                yield return new Node<TKey, TValue>(Data[i].Key, Data[i].Value);
         }
 
         /// <summary>
