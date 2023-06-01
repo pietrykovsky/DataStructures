@@ -9,8 +9,9 @@ namespace DataStructures
         public override IEnumerator<Node<TKey, TValue>> GetEnumerator()
         {
             // Iterate over all buckets.
-            for (int i = 0; i < Data.Length; i++)
-                yield return new Node<TKey, TValue>(Data[i].Key, Data[i].Value);
+            foreach (var node in Data)
+                if(node != null)
+                    yield return node;
         }
 
         /// <summary>

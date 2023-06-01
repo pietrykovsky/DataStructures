@@ -15,14 +15,14 @@ namespace DataStructures
         public override IEnumerator<Node<TKey, TValue>> GetEnumerator()
         {
             // Iterate over all buckets.
-            for (int i = 0; i < Data.Length; i++)
+            foreach (var node in Data)
             {
-                var current = Data[i];
+                var current = node;
 
                 // Iterate over all nodes within a bucket.
                 while (current != null)
                 {
-                    yield return new Node<TKey, TValue>(current.Key, current.Value);
+                    yield return current;
                     current = current.Next;
                 }
             }
