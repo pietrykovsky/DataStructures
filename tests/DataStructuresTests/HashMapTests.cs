@@ -1,4 +1,3 @@
-using DataStructures;
 namespace DataStructuresTests
 {
     public class HashMapTests
