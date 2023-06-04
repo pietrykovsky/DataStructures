@@ -6,13 +6,13 @@ namespace DataStructures
     {
         private static void Main(string[] args)
         {
-            var testData = GenerateTestData(10_000);
-            var sampleSizes = new int[] { 1_00, 1_000, 5_000, 10_000 };
+            var sampleSizes = new int[] { 100, 1000, 5000, 10000, 20000 };
+            var testData = GenerateTestData(sampleSizes.Last());
             var iterations = 20;
-            TestDataStructures(testData, iterations, sampleSizes);
+            MeasureDataStructures(testData, iterations, sampleSizes);
         }
 
-        private static void TestDataStructures(Node<string, int>[] data, int iterations, int[] sampleSizes)
+        private static void MeasureDataStructures(Node<string, int>[] data, int iterations, int[] sampleSizes)
         {
             foreach (var sampleSize in sampleSizes)
             {
@@ -25,9 +25,37 @@ namespace DataStructures
                 foreach (var dataStructure in dataStructures)
                 {
                     PopulateMap(dataStructure.Value, data, sampleSize);
-                    Console.WriteLine(dataStructure.Value.Size());
+                    MeasureDataStructure(dataStructure, iterations, sampleSize);
                 }
             }
+        }
+
+        private static void MeasureDataStructure(KeyValuePair<string, BaseMap<string, int>> dataStructure, int iterations, int sampleSize)
+        {
+            var averageGet = 0l;
+            var averagePut = 0l;
+            var averageRemove = 0l;
+            var averageContainsKey = 0l;
+
+            for (var i = 0; i < iterations; i++)
+            {
+                averageRemove += MeasureMethodTime(dataStructure.Value.Remove, "bc");
+                averageContainsKey += MeasureMethodTime(dataStructure.Value.ContainsKey, "bc");
+                averagePut += MeasureMethodTime(dataStructure.Value.Put, "bc", 5);
+                averageGet += MeasureMethodTime(dataStructure.Value.Get, "bc");
+            }
+
+            averageRemove /= iterations;
+            averageContainsKey /= iterations;
+            averagePut /= iterations;
+            averageGet /= iterations;
+
+            Console.WriteLine(dataStructure.Key);
+            Console.WriteLine($"sample size: {sampleSize}");
+            Console.WriteLine($"Get average: {averageGet} ms");
+            Console.WriteLine($"Put average: {averagePut} ms");
+            Console.WriteLine($"Remove average: {averageRemove} ms");
+            Console.WriteLine($"ContainsKey average: {averageContainsKey} ms\n");
         }
 
         private static void PrintMap(BaseMap<string, int> map)
@@ -68,10 +96,28 @@ namespace DataStructures
             return data;
         }
 
-        private static long measureTime(Action<string> removeFunc, string key)
+        private static long MeasureMethodTime<TKey>(Action<TKey> removeFunc, TKey key)
         {
             var watch = Stopwatch.StartNew();
             removeFunc(key);
+            watch.Stop();
+            var time = watch.ElapsedMilliseconds;
+            return time;
+        }
+
+        private static long MeasureMethodTime<TKey, TResult>(Func<TKey, TResult> removeFunc, TKey key)
+        {
+            var watch = Stopwatch.StartNew();
+            removeFunc(key);
+            watch.Stop();
+            var time = watch.ElapsedMilliseconds;
+            return time;
+        }
+
+        private static long MeasureMethodTime<TKey, TValue>(Action<TKey, TValue> removeFunc, TKey key, TValue value)
+        {
+            var watch = Stopwatch.StartNew();
+            removeFunc(key, value);
             watch.Stop();
             var time = watch.ElapsedMilliseconds;
             return time;
