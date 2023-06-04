@@ -178,4 +178,19 @@ namespace DataStructures
             return sum % Data.Length;
         }
     }
+
+    public class CollisionHashMap<TValue> : BaseHashMap<int, TValue>
+    {
+        public CollisionHashMap(int capacity) : base(capacity) { }
+
+        protected override int GetHash(int key)
+        {
+            return key % Data.Length;
+        }
+
+        public int GetHashCode(int key)
+        {
+            return GetHash(key);
+        }
+    }
 }
