@@ -248,5 +248,24 @@ namespace DataStructuresTests
             // Assert
             Assert.Empty(enumeratedData);
         }
+
+        [Fact]
+        public void CollisionHashMap_GetHash_LinkingNodes()
+        {
+            // Arrange
+            var data = new CollisionHashMap<int>(10);
+            data.Put(1, 1);
+            data.Put(11, 11);
+            data.Put(101, 101);
+            // Act
+            var hash1 = data.GetHashCode(1);
+            var hash11 = data.GetHashCode(11);
+
+            // Assert
+            Assert.Equal(hash1, hash11);
+            Assert.Equal(1, data.Get(1));
+            Assert.Equal(11, data.Get(11));
+            Assert.Equal(101, data.Get(101));
+        }
     }
 }

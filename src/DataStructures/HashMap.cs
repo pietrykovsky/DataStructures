@@ -187,5 +187,10 @@ namespace DataStructures
         {
             return key % Data.Length;
         }
+
+        public int GetHashCode(int key)
+        {
+            return GetHash(key);
+        }
     }
 }
