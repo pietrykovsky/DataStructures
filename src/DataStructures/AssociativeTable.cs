@@ -50,7 +50,7 @@ namespace DataStructures
 
             for (int i = 0; i < Count; i++)
             {
-                if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, key))
+                if (Data[i] != null && EqualityComparer<TKey>.Default.Equals(Data[i].Key, key))
                 {
                     Data[i].Value = value;
                     return;
@@ -87,7 +87,7 @@ namespace DataStructures
         {
             for (int i = 0; i < Data.Length; i++)
             {
-                if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
+                if (Data[i] != null && EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
                 {
                     return Data[i].Value;
                 }
@@ -105,7 +105,7 @@ namespace DataStructures
         {
             for (int i = 0; i < Count; i++)
             {
-                if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
+                if (Data[i] != null && EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
                 {
                     return true;
                 }
@@ -122,7 +122,7 @@ namespace DataStructures
         {
             for (int i = 0; i < Count; i++)
             {
-                if (EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
+                if (Data[i] != null && EqualityComparer<TKey>.Default.Equals(Data[i].Key, Key))
                 {
                     Data[i] = new Node<TKey, TValue>(default(TKey), default(TValue));
                     if (i < FirstFreeIndex)
