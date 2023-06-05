@@ -138,6 +138,11 @@ The following performance plots illustrate the performance of the data structure
 
 This project is licensed under the [MIT License](LICENSE).
 
+## Authors
+
+- [pietrykovsky](https://github.com/pietrykovsky)
+- [chavoniasty](https://github.com/chavoniasty)
+
 ## Acknowledgments
 
 - This project uses the [Newtonsoft.Json](https://www.newtonsoft.com/json) library for JSON serialization.
