@@ -12,6 +12,8 @@ class Program
         foreach (int len in dataLengths)
         {
             results.Add(PerformanceTest<SimpleHashMap<string, int>>(len, new SimpleHashMap<string, int>(len)));
+            results.Add(PerformanceTest<LengthHashMap<string, int>>(len, new LengthHashMap<string, int>(len)));
+            results.Add(PerformanceTest<CharValueHashMap<string, int>>(len, new CharValueHashMap<string, int>(len)));
             results.Add(PerformanceTest<AssociativeTable<string, int>>(len, new AssociativeTable<string, int>(len)));
         }
 
