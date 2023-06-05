@@ -1,29 +1,37 @@
-﻿using DataStructures;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using System.IO;
+using DataStructures;
 
 class Program
 {
     static void Main()
     {
         var dataLengths = new[] { 10, 100, 1000, 10000, 25000 };
+        var results = new List<PerformanceResult>();
 
         foreach (int len in dataLengths)
         {
-            Console.WriteLine($"Testing with data length: {len}");
-            PerformanceTest<SimpleHashMap<string, int>>(len, new SimpleHashMap<string, int>(len));
-            PerformanceTest<AssociativeTable<string, int>>(len, new AssociativeTable<string, int>(len));
-            Console.WriteLine();
+            results.Add(PerformanceTest<SimpleHashMap<string, int>>(len, new SimpleHashMap<string, int>(len)));
+            results.Add(PerformanceTest<AssociativeTable<string, int>>(len, new AssociativeTable<string, int>(len)));
         }
+
+        var jsonString = JsonConvert.SerializeObject(results);
+        File.WriteAllText(@"C:\Users\mivva\Desktop\Projekty\c#\DataStructures\performanceData.json", jsonString);
     }
 
-    static void PerformanceTest<T>(int dataLength, BaseMap<string, int> dataStructure)
+    static PerformanceResult PerformanceTest<T>(int dataLength, BaseMap<string, int> dataStructure) where T : BaseMap<string, int>
     {
+        var result = new PerformanceResult
+        {
+            DataType = typeof(T).Name,
+            DataLength = dataLength
+        };
+
         Stopwatch sw = new Stopwatch();
         var keys = new List<string>();
-
-        Console.WriteLine($"Testing Performance of {typeof(T).Name}:");
 
         // Insertion
         sw.Start();
@@ -34,7 +42,7 @@ class Program
             dataStructure.Put(key, i);
         }
         sw.Stop();
-        Console.WriteLine($"Insertion: {sw.ElapsedMilliseconds}ms");
+        result.InsertionTime = sw.ElapsedMilliseconds;
         sw.Reset();
 
         // Get method
@@ -44,7 +52,7 @@ class Program
             var value = dataStructure.Get(keys[i]);
         }
         sw.Stop();
-        Console.WriteLine($"Retrieval: {sw.ElapsedMilliseconds}ms");
+        result.RetrievalTime = sw.ElapsedMilliseconds;
         sw.Reset();
 
         // ContainsKey method
@@ -54,7 +62,7 @@ class Program
             bool exists = dataStructure.ContainsKey(keys[i]);
         }
         sw.Stop();
-        Console.WriteLine($"ContainsKey: {sw.ElapsedMilliseconds}ms");
+        result.ContainsKeyTime = sw.ElapsedMilliseconds;
         sw.Reset();
 
         // Remove method
@@ -64,6 +72,18 @@ class Program
             dataStructure.Remove(keys[i]);
         }
         sw.Stop();
-        Console.WriteLine($"Removal: {sw.ElapsedMilliseconds}ms");
+        result.RemovalTime = sw.ElapsedMilliseconds;
+
+        return result;
     }
+}
+
+public class PerformanceResult
+{
+    public string DataType { get; set; }
+    public int DataLength { get; set; }
+    public long InsertionTime { get; set; }
+    public long RetrievalTime { get; set; }
+    public long ContainsKeyTime { get; set; }
+    public long RemovalTime { get; set; }
 }
