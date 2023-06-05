@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Newtonsoft.Json;
-using System.IO;
 using DataStructures;
 
 class Program
 {
     static void Main()
     {
-        var dataLengths = new[] { 10, 100, 1000, 10000, 25000 };
+        var dataLengths = new[] { 10, 100, 1000, 10000, 20000, 50000, 100000 };
         var results = new List<PerformanceResult>();
 
         foreach (int len in dataLengths)
@@ -19,7 +16,7 @@ class Program
         }
 
         var jsonString = JsonConvert.SerializeObject(results);
-        File.WriteAllText(@"C:\Users\mivva\Desktop\Projekty\c#\DataStructures\performanceData.json", jsonString);
+        File.WriteAllText(@"C:\Users\mivva\Desktop\Projekty\c#\DataStructures\results\performanceData.json", jsonString);
     }
 
     static PerformanceResult PerformanceTest<T>(int dataLength, BaseMap<string, int> dataStructure) where T : BaseMap<string, int>
@@ -27,7 +24,7 @@ class Program
         var result = new PerformanceResult
         {
             DataType = typeof(T).Name,
-            DataLength = dataLength
+            DataSize = dataLength
         };
 
         Stopwatch sw = new Stopwatch();
@@ -42,7 +39,7 @@ class Program
             dataStructure.Put(key, i);
         }
         sw.Stop();
-        result.InsertionTime = sw.ElapsedMilliseconds;
+        result.PutTime = sw.ElapsedMilliseconds;
         sw.Reset();
 
         // Get method
@@ -52,7 +49,7 @@ class Program
             var value = dataStructure.Get(keys[i]);
         }
         sw.Stop();
-        result.RetrievalTime = sw.ElapsedMilliseconds;
+        result.GetTime = sw.ElapsedMilliseconds;
         sw.Reset();
 
         // ContainsKey method
@@ -72,7 +69,7 @@ class Program
             dataStructure.Remove(keys[i]);
         }
         sw.Stop();
-        result.RemovalTime = sw.ElapsedMilliseconds;
+        result.RemoveTime = sw.ElapsedMilliseconds;
 
         return result;
     }
@@ -81,9 +78,9 @@ class Program
 public class PerformanceResult
 {
     public string DataType { get; set; }
-    public int DataLength { get; set; }
-    public long InsertionTime { get; set; }
-    public long RetrievalTime { get; set; }
+    public int DataSize { get; set; }
+    public long PutTime { get; set; }
+    public long GetTime { get; set; }
     public long ContainsKeyTime { get; set; }
-    public long RemovalTime { get; set; }
+    public long RemoveTime { get; set; }
 }
