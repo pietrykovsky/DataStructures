@@ -1,126 +1,69 @@
-﻿using System.Diagnostics;
+﻿using DataStructures;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
-namespace DataStructures
+class Program
 {
-    internal class Program
+    static void Main()
     {
-        private static void Main(string[] args)
+        var dataLengths = new[] { 10, 100, 1000, 10000, 25000 };
+
+        foreach (int len in dataLengths)
         {
-            var sampleSizes = new int[] { 100, 1000, 5000, 10000, 20000 };
-            var testData = GenerateTestData(sampleSizes.Last());
-            var iterations = 20;
-            MeasureDataStructures(testData, iterations, sampleSizes);
+            Console.WriteLine($"Testing with data length: {len}");
+            PerformanceTest<SimpleHashMap<string, int>>(len, new SimpleHashMap<string, int>(len));
+            PerformanceTest<AssociativeTable<string, int>>(len, new AssociativeTable<string, int>(len));
+            Console.WriteLine();
         }
+    }
 
-        private static void MeasureDataStructures(Node<string, int>[] data, int iterations, int[] sampleSizes)
+    static void PerformanceTest<T>(int dataLength, BaseMap<string, int> dataStructure)
+    {
+        Stopwatch sw = new Stopwatch();
+        var keys = new List<string>();
+
+        Console.WriteLine($"Testing Performance of {typeof(T).Name}:");
+
+        // Insertion
+        sw.Start();
+        for (int i = 0; i < dataLength; i++)
         {
-            foreach (var sampleSize in sampleSizes)
-            {
-                var dataStructures = new Dictionary<string, BaseMap<string, int>>
-                {
-                    {"Associative Table", new AssociativeTable<string, int>(sampleSize)},
-                    {"Simple Hash Map", new SimpleHashMap<string, int>(sampleSize)},
-                };
-
-                foreach (var dataStructure in dataStructures)
-                {
-                    PopulateMap(dataStructure.Value, data, sampleSize);
-                    MeasureDataStructure(dataStructure, iterations, sampleSize);
-                }
-            }
+            string key = Guid.NewGuid().ToString();
+            keys.Add(key);
+            dataStructure.Put(key, i);
         }
+        sw.Stop();
+        Console.WriteLine($"Insertion: {sw.ElapsedMilliseconds}ms");
+        sw.Reset();
 
-        private static void MeasureDataStructure(KeyValuePair<string, BaseMap<string, int>> dataStructure, int iterations, int sampleSize)
+        // Get method
+        sw.Start();
+        for (int i = 0; i < dataLength; i++)
         {
-            var averageGet = 0l;
-            var averagePut = 0l;
-            var averageRemove = 0l;
-            var averageContainsKey = 0l;
-
-            for (var i = 0; i < iterations; i++)
-            {
-                averageRemove += MeasureMethodTime(dataStructure.Value.Remove, "bc");
-                averageContainsKey += MeasureMethodTime(dataStructure.Value.ContainsKey, "bc");
-                averagePut += MeasureMethodTime(dataStructure.Value.Put, "bc", 5);
-                averageGet += MeasureMethodTime(dataStructure.Value.Get, "bc");
-            }
-
-            averageRemove /= iterations;
-            averageContainsKey /= iterations;
-            averagePut /= iterations;
-            averageGet /= iterations;
-
-            Console.WriteLine(dataStructure.Key);
-            Console.WriteLine($"sample size: {sampleSize}");
-            Console.WriteLine($"Get average: {averageGet} ms");
-            Console.WriteLine($"Put average: {averagePut} ms");
-            Console.WriteLine($"Remove average: {averageRemove} ms");
-            Console.WriteLine($"ContainsKey average: {averageContainsKey} ms\n");
+            var value = dataStructure.Get(keys[i]);
         }
+        sw.Stop();
+        Console.WriteLine($"Retrieval: {sw.ElapsedMilliseconds}ms");
+        sw.Reset();
 
-        private static void PrintMap(BaseMap<string, int> map)
+        // ContainsKey method
+        sw.Start();
+        for (int i = 0; i < dataLength; i++)
         {
-            foreach (var node in map)
-            {
-                Console.WriteLine($"{node.Key} {node.Value}");
-            }
+            bool exists = dataStructure.ContainsKey(keys[i]);
         }
+        sw.Stop();
+        Console.WriteLine($"ContainsKey: {sw.ElapsedMilliseconds}ms");
+        sw.Reset();
 
-        private static void PopulateMap(BaseMap<string, int> map, Node<string, int>[] data, int n)
+        // Remove method
+        sw.Start();
+        for (int i = 0; i < dataLength; i++)
         {
-            var count = 0;
-            foreach (var record in data)
-            {
-                if (count == n)
-                    return;
-                map.Put(record.Key, record.Value);
-                count++;
-            }
+            dataStructure.Remove(keys[i]);
         }
-
-        private static string GetKeyword(int n)
-        {
-            string baseChars = "abcdefghijklmnopqrstuvwxyz";
-            if (n < baseChars.Length)
-                return baseChars[n].ToString();
-            return GetKeyword(n / baseChars.Length - 1) + baseChars[n % baseChars.Length];
-        }
-
-        private static Node<string, int>[] GenerateTestData(int n)
-        {
-            var data = new Node<string, int>[n];
-            for (var i = 0; i < n; i++)
-            {
-                data[i] = new Node<string, int>(key: GetKeyword(i), value: i + 1);
-            }
-            return data;
-        }
-
-        private static long MeasureMethodTime<TKey>(Action<TKey> removeFunc, TKey key)
-        {
-            var watch = Stopwatch.StartNew();
-            removeFunc(key);
-            watch.Stop();
-            var time = watch.ElapsedMilliseconds;
-            return time;
-        }
-
-        private static long MeasureMethodTime<TKey, TResult>(Func<TKey, TResult> removeFunc, TKey key)
-        {
-            var watch = Stopwatch.StartNew();
-            removeFunc(key);
-            watch.Stop();
-            var time = watch.ElapsedMilliseconds;
-            return time;
-        }
-
-        private static long MeasureMethodTime<TKey, TValue>(Action<TKey, TValue> removeFunc, TKey key, TValue value)
-        {
-            var watch = Stopwatch.StartNew();
-            removeFunc(key, value);
-            watch.Stop();
-            var time = watch.ElapsedMilliseconds;
-            return time;
-        }
+        sw.Stop();
+        Console.WriteLine($"Removal: {sw.ElapsedMilliseconds}ms");
     }
 }
